@@ -85,22 +85,20 @@ def zchi2_single_template_no_poly(j,t_fft, t2_fft, data_fft, ivar_fft, chi2_0, n
 
 
 class ZFinder:
-
-
-    def __init__(self, fname=None, group=0, npoly=None, zmin=None, zmax=None, nproc=1):
-
+    def __init__(self, fname=None, group=[0], npoly=None, zmin=None, zmax=None, nproc=1):
         self.fname = fname
-        self.group = group
-        if npoly is not None :
-            self.npoly = npoly
-        else :
-            self.npoly = 4
+        if type(group) == list:
+            self.group = group
+        elif type(group) == int:
+            self.group = [group,]
+        else:
+            self.group = eval(group)
+        self.npoly = npoly if npoly is not None else 4
         self.zmin = float(zmin)
         self.zmax = float(zmax)
         self.nproc = nproc
         self.pixoffset = None
         self.zchi2arr = None
-        self.nproc=nproc
 
         try:
             self.templatesdir = environ['REDMONSTER_TEMPLATES_DIR']
@@ -295,8 +293,7 @@ class ZFinder:
             else:
                 print('WARNING Plate/mjd/fiberid not given - unable to write chi2 file!')
         else:
-            #print 'INFO Not writing chi2'
-            pass
+            print('INFO Not writing chi2')
 
     def store_models(self, specs, ivar):
         self.models = n.zeros( (specs.shape) )

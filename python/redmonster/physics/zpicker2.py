@@ -108,11 +108,11 @@ class ZPicker:
             npixsteptuple = ()
             fstuple = ()
             # Catch spectra that are all 0's and return null result
-            if len(n.where(self.flux[0] != 0)[0]) == 0:
+            if n.all(self.flux[ifiber] == 0.0) or n.all(self.ivar[ifiber] == 0.0):
                 ztuple = (-1,)*self.num_z
                 zerrtuple = (-1,)*self.num_z
                 fnametuple = ('noSpectrum',)*self.num_z
-                grouptuple = ('noSpectrum',)*self.num_z
+                grouptuple = (-1,)*self.num_z
                 typetuple = ('noSpectrum',)*self.num_z
                 subtypetuple = ('noSpectrum',)*self.num_z
                 minchi2tuple = (-1,)*self.num_z
@@ -139,16 +139,17 @@ class ZPicker:
                             fiberminvecs.append(
                                     zfitobjs[itemp].minvectors[ifiber][imin])
                         except IndexError as e:
-                            #print "%r" % e
-                            #fibermins.append( \
-                            #        n.max(zfitobjs[itemp].chi2vals[ifiber]) / \
-                            #        (self.dof[ifiber] - zfindobjs[itemp].npoly))
+                            print(repr(e))
+                            fiberminvecs.append( (-1,) )
+                            if len(zfitobjs[itemp].chi2vals[ifiber]) > 0:
+                                fibermins.append( \
+                                       n.max(zfitobjs[itemp].chi2vals[ifiber]) / \
+                                       (self.dof[ifiber] - zfindobjs[itemp].npoly))
+                            else:
+                                fibermins.append(100000.)
 
                             # this is ok, might be no solution
-                            #print "WARNING no z fitted for fiber #%d, class #%d, zid #%d"%(ifiber,itemp,imin)
-
-                            fibermins.append(100000.)
-                            fiberminvecs.append( (-1,) )
+                            print("WARNING no z fitted for fiber #%d, class #%d, zid #%d"%(ifiber,itemp,imin))
 
                 # Build tuples of num_z best redshifts and classifications
                 # for this fiber
@@ -218,7 +219,8 @@ class ZPicker:
                 if self.z[ifiber][0] != -1:
                     if (c_kms*n.abs(self.z[ifiber][0] - self.z[ifiber][1])) / \
                             (1 + self.z[ifiber][0]) > 1000:
-                        if self.group[ifiber][0] != self.group[ifiber][1]:
+                        if not any(a in self.group[ifiber][0] for
+                                   a in self.group[ifiber][1]):
                             self.flag_small_dchi2(ifiber)
                 else:
                     self.flag_small_dchi2(ifiber)
