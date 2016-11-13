@@ -3806,7 +3806,7 @@ class VerifyRM:
             if this_dist <= n.sqrt(.5):
                 inner_50_fails.append(fail[i])
         inner_50_fails = n.array(inner_50_fails)
-        print 'Average failure rate of inner 50 percent of fibers is %s' % (n.sum(inner_50_fails)/inner_50_fails.shape[0])
+        print('Average failure rate of inner 50 percent of fibers is %s' % (n.sum(inner_50_fails)/inner_50_fails.shape[0]))
 
 
     def failure_vs_sn_sns(self,sn_max=5,nbins=20):
