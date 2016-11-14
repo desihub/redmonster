@@ -23,7 +23,7 @@ try:
     rmver = environ['REDMONSTER_VER']
 except KeyError as e:
     rmver = None
-    print "Environmental variable 'REDMONSTER_VER' is not set: %r" % e
+    print("Environmental variable 'REDMONSTER_VER' is not set: %r" % e)
 try:
     run2d = environ['RUN2D']
 except KeyError as e:
